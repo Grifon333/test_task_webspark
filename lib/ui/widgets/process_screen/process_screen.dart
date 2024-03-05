@@ -44,7 +44,7 @@ class _BodyWidget extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Text(
-                'Start counting process',
+                'Send results to server',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),

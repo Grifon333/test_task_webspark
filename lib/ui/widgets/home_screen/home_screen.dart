@@ -33,23 +33,38 @@ class _BodyWidget extends StatelessWidget {
         const SizedBox(height: 10),
         const Row(
           children: [
-            Icon(
-              Icons.compare_arrows,
-              color: Colors.grey,
+            Flexible(
+              flex: 1,
+              child: Icon(
+                Icons.compare_arrows,
+                color: Colors.grey,
+              ),
             ),
-            SizedBox(width: 10),
-            SizedBox(width: 300, child: TextField())
+            Expanded(child: SizedBox()),
+            Flexible(
+              flex: 10,
+              child: TextField(),
+            )
           ],
         ),
         const Expanded(child: SizedBox()),
         ElevatedButton(
           onPressed: () {},
+          // style: ButtonStyle(
+          //   backgroundColor: MaterialStateProperty.all(Colors.lightBlueAccent),
+          //   side: MaterialStateProperty.all(
+          //     const BorderSide(color: Colors.blue),
+          //   ),
+          // ),
           child: const Center(
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Text(
                 'Start counting process',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
           ),
