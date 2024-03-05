@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class ProcessScreen extends StatelessWidget {
+  const ProcessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
-        title: const Text('Home screen'),
+        title: const Text('Process screen'),
       ),
       body: const Padding(
         padding: EdgeInsets.all(16),
@@ -24,23 +23,20 @@ class _BodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Expanded(child: SizedBox()),
         const Text(
-          'Set valid API base URL in order to continue',
-          style: TextStyle(fontSize: 16),
+          'All calculation has finished, you can send your result to server',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
         ),
-        const SizedBox(height: 10),
-        const Row(
-          children: [
-            Icon(
-              Icons.compare_arrows,
-              color: Colors.grey,
-            ),
-            SizedBox(width: 10),
-            SizedBox(width: 300, child: TextField())
-          ],
+        const SizedBox(height: 20),
+        const Text(
+          '100%',
+          style: TextStyle(fontSize: 20),
         ),
+        const Divider(),
+        const SizedBox(width: 100, height: 100, child: CircularProgressIndicator(value: 1,)),
         const Expanded(child: SizedBox()),
         ElevatedButton(
           onPressed: () {},
