@@ -11,7 +11,7 @@ abstract class MainNavigationRouteName {
 }
 
 class MainNavigation {
-  final initialRoute = MainNavigationRouteName.preview_sceen;
+  final initialRoute = MainNavigationRouteName.process;
   final routes = {
     MainNavigationRouteName.home : (context) => const HomeScreen(),
     MainNavigationRouteName.process: (context) => const ProcessScreen(),
