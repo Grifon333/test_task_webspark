@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_task/domain/api_client.dart';
+import 'package:test_task/domain/box_manager.dart';
 import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/domain/entity/point.dart';
 import 'package:test_task/domain/entity/way.dart';
@@ -30,11 +31,9 @@ class ProcessScreenModel extends ChangeNotifier {
   bool isDataSending = false;
 
   void startProcess() async {
-    final box = await Hive.openBox('data');
     isCalculating = true;
     notifyListeners();
-    _dataList = box.values.map((e) => e as Data).toList();
-    box.close();
+    await _readDataFromStorage();
     textForLoading = 'Data is calculated';
     notifyListeners();
     for (int i = 0; i < _dataList.length; i++) {
@@ -122,11 +121,31 @@ class ProcessScreenModel extends ChangeNotifier {
     isDataSending = false;
     notifyListeners();
 
+    _saveWaysToStorage();
     _goToNextScreen(context);
   }
 
   void _goToNextScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.result_list, arguments: _ways);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.result_list);
+  }
+
+  Future<void> _readDataFromStorage() async {
+    Box<Data> box = await BoxManager.instance.openDataBox();
+    _dataList = box.values.toList();
+    debugPrint('---------------Read Data From Storage----------------');
+    debugPrint(_dataList.toString());
+    // await BoxManager.instance.closeBox(box);
+  }
+
+  Future<void> _saveWaysToStorage() async {
+    Box<Way> box = await BoxManager.instance.openWayBox();
+    box.clear();
+    for(var way in _ways) {
+      box.put(way.id, way);
+    }
+    debugPrint('---------------Save Ways To Storage----------------');
+    debugPrint(_ways.map((e) => e.result.path).toString());
+    // await BoxManager.instance.closeBox(box);
   }
 }
 

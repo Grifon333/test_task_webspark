@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_task/domain/api_client.dart';
+import 'package:test_task/domain/box_manager.dart';
 import 'package:test_task/domain/data_provider.dart';
 import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/ui/navigation/main_navigation.dart';
 
 class HomeScreenModel extends ChangeNotifier {
-  final controllerUrl = TextEditingController(text: 'https://flutter.webspark.dev/flutter/api');
+  final controllerUrl =
+      TextEditingController(text: 'https://flutter.webspark.dev/flutter/api');
   bool isCorrectedUrl = true;
   String? _errorMassage;
 
@@ -56,12 +58,14 @@ class HomeScreenModel extends ChangeNotifier {
   }
 
   void _saveDataToStorage(List<Data> dataList) async {
-    var box = await Hive.openBox<Data>('data');
-    for(var data in dataList) {
-      box.add(data);
+    Box<Data> box = await BoxManager.instance.openDataBox();
+    box.clear();
+    for (var data in dataList) {
+      box.put(data.id, data);
     }
-    // debugPrint(box.values.toString());
-    box.close();
+    debugPrint('---------------Save Data To Storage----------------');
+    debugPrint(dataList.toString());
+    // await BoxManager.instance.closeBox(box);
   }
 }
 

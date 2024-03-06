@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:test_task/domain/entity/way.dart';
 import 'package:test_task/ui/widgets/result_list_screen/result_list_screen_model.dart';
 
 class ResultListScreen extends StatelessWidget {
-  final List<Way> listWays;
-
-  const ResultListScreen({
-    super.key,
-    required this.listWays,
-  });
+  const ResultListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final model = ResultListScreenModel();
-    model.ways = listWays;
-    debugPrint(listWays.map((e) => e.toJson()).toString());
+    model.readWaysFromStorage();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Result list screen'),
@@ -35,8 +28,13 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read(context);
+    final model = NotifierProvider.watch(context);
     if (model == null) return const SizedBox();
+    if (model.ways.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return ListView.separated(
       itemBuilder: (context, index) => GestureDetector(
         onTap: () => model.goToNextScreen(context, index),
