@@ -25,7 +25,7 @@ class ProcessScreenModel extends ChangeNotifier {
     Point(-1, -1),
   ];
   double progress = 0;
-  String textForLoading = 'Data is calculated';
+  String textForLoading = 'Data is getting';
   bool isCalculating = false;
   bool isDataSending = false;
 
@@ -35,6 +35,8 @@ class ProcessScreenModel extends ChangeNotifier {
     isCalculating = true;
     notifyListeners();
     dataList = await _dataList;
+    textForLoading = 'Data is calculated';
+    notifyListeners();
     for (int i = 0; i < dataList.length; i++) {
       _generateMatrix(i);
       Data data = dataList[i];
@@ -124,7 +126,7 @@ class ProcessScreenModel extends ChangeNotifier {
   }
 
   void _goToNextScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.result_list);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.result_list, arguments: _ways);
   }
 }
 

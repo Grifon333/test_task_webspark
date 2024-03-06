@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/domain/entity/way.dart';
+import 'package:test_task/ui/widgets/result_list_screen/result_list_screen_model.dart';
 
 class ResultListScreen extends StatelessWidget {
-  const ResultListScreen({super.key});
+  final List<Way> listWays;
+
+  const ResultListScreen({
+    super.key,
+    required this.listWays,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final model = ResultListScreenModel();
+    model.ways = listWays;
+    debugPrint(listWays.map((e) => e.toJson()).toString());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Result list screen'),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
-        child: _BodyWidget(),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: NotifierProvider(
+          model: model,
+          child: const _BodyWidget(),
+        ),
       ),
     );
   }
@@ -22,29 +35,41 @@ class _BodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.read(context);
+    if (model == null) return const SizedBox();
     return ListView.separated(
       itemBuilder: (context, index) => GestureDetector(
-          onTap: () {
-            debugPrint(index.toString());
-          },
-          child: const _ResultWidget()),
+        onTap: () => model.goToNextScreen(context, index),
+        child: _ResultWidget(
+          index: index,
+        ),
+      ),
       separatorBuilder: (context, index) => const Divider(),
-      itemCount: 20,
+      itemCount: model.ways.length,
     );
   }
 }
 
 class _ResultWidget extends StatelessWidget {
-  const _ResultWidget({super.key});
+  final int index;
+
+  const _ResultWidget({
+    super.key,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(14),
+    final model = NotifierProvider.read(context);
+    if (model == null) return const SizedBox();
+    final path = model.ways[index].result.path;
+
+    return Padding(
+      padding: const EdgeInsets.all(14),
       child: Center(
         child: Text(
-          '(0,3) -> (0,2) -> (0,1)',
-          style: TextStyle(
+          path,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

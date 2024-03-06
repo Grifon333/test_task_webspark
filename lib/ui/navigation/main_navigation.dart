@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:test_task/domain/entity/data.dart';
+import 'package:test_task/domain/entity/way.dart';
 import 'package:test_task/ui/widgets/home_screen/home_screen.dart';
 import 'package:test_task/ui/widgets/preview_screen/preview_screen.dart';
 import 'package:test_task/ui/widgets/process_screen/process_screen.dart';
@@ -18,7 +19,7 @@ class MainNavigation {
   final routes = {
     MainNavigationRouteName.home: (context) => const HomeScreen(),
     // MainNavigationRouteName.process: (context) => const ProcessScreen(),
-    MainNavigationRouteName.result_list: (context) => const ResultListScreen(),
+    // MainNavigationRouteName.result_list: (context) => const ResultListScreen(),
     MainNavigationRouteName.preview_sceen: (context) => const PreviewScreen(),
   };
 
@@ -30,6 +31,14 @@ class MainNavigation {
         return MaterialPageRoute(
           builder: (context) => ProcessScreen(
             data: listData,
+          ),
+        );
+      case MainNavigationRouteName.result_list:
+        final argument = settings.arguments;
+        final listWays = argument as List<Way>;
+        return MaterialPageRoute(
+          builder: (context) => ResultListScreen(
+            listWays: listWays,
           ),
         );
       default:
