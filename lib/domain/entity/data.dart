@@ -26,6 +26,15 @@ class Data {
     data['end'] = end.toJson();
     return data;
   }
+
+  @override
+  String toString() {
+    List<String> str = [];
+    str.addAll(field);
+    str.add('start: $start');
+    str.add('end: $end');
+    return str.join('\n');
+  }
 }
 
 class Point {
@@ -47,5 +56,10 @@ class Point {
     data['x'] = x;
     data['y'] = y;
     return data;
+  }
+
+  @override
+  String toString() {
+    return '$x, $y';
   }
 }

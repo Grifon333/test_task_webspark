@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_task/domain/api_client.dart';
 import 'package:test_task/ui/navigation/main_navigation.dart';
 
 void main() {
@@ -12,7 +11,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigation = MainNavigation();
-    ApiClient().getData();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

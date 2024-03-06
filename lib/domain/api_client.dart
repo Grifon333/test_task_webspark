@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:test_task/domain/data_provider.dart';
 import 'package:test_task/domain/entity/data.dart';
 
 enum ApiClientExceptionType {
   tooManyRequest,
   internalServerError,
   other,
+  emptyAddress,
 }
 
 class ApiClientException {
@@ -17,17 +19,23 @@ class ApiClientException {
 
 class ApiClient {
   final _client = HttpClient();
+
   final _host = 'https://flutter.webspark.dev';
 
-  Future<List<Data>> getData() async {
-    String path = '/flutter/api';
-    final url = Uri.parse('$_host$path');
+  Future<List<Data>> getData(//   String address, [
+      //   Map<String, dynamic>? parameters,
+      // ]
+      ) async {
+    // String path = '/flutter/api';
+    // final url = makeUri(address, parameters);
     try {
+      final address = await _getUrlFromStorage();
+      final url = _makeUri(address);
       final request = await _client.getUrl(url);
       final response = await request.close();
       final dynamic json = (await response.jsonDecode());
       _validateResponse(response, json);
-      final data = parserGet(json);
+      final data = _parserGet(json);
       return data;
     } on ApiClientException {
       rethrow;
@@ -36,9 +44,10 @@ class ApiClient {
     }
   }
 
-  Future<bool> post() async {
+  Future<bool> post(String address) async {
     String path = '/flutter/api';
-    final url = Uri.parse('$_host$path');
+    // final url = Uri.parse('$_host$path');
+    final url = _makeUri('$_host$path');
     Map<String, dynamic> body = {};
     try {
       final request = await _client.postUrl(url);
@@ -47,7 +56,7 @@ class ApiClient {
       final response = await request.close();
       final dynamic json = (await response.jsonDecode());
       _validateResponse(response, json);
-      final result = parserPost(json);
+      final result = _parserPost(json);
       return result;
     } on ApiClientException {
       rethrow;
@@ -56,13 +65,29 @@ class ApiClient {
     }
   }
 
-  List<Data> parserGet(dynamic json) {
+  Future<String> _getUrlFromStorage() async {
+    final address = await DataProvider().getUrl();
+    if (address == null) {
+      throw ApiClientException(ApiClientExceptionType.emptyAddress);
+    }
+    return address;
+  }
+
+  Uri _makeUri(String address, [Map<String, dynamic>? parameters]) {
+    final url = Uri.parse(address);
+    if (parameters != null) {
+      return url.replace(queryParameters: parameters);
+    }
+    return url;
+  }
+
+  List<Data> _parserGet(dynamic json) {
     final jsonMap = json as Map<String, dynamic>;
     final dataList = jsonMap['data'] as List<dynamic>;
     return dataList.map((value) => Data.fromJson(value)).toList();
   }
 
-  bool parserPost(dynamic json) {
+  bool _parserPost(dynamic json) {
     final jsonMap = json as Map<String, dynamic>;
     final data = jsonMap['data'] as Map<String, dynamic>;
     return data['correct'] as bool;
