@@ -89,7 +89,7 @@ class _FormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch(context);
+    final model = NotifierProvider.read(context);
     if (model == null) return const SizedBox.shrink();
     return TextField(
       controller: model.controllerUrl,

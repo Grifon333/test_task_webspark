@@ -1,3 +1,5 @@
+import 'point.dart';
+
 class Data {
   late String id;
   late List<String> field;
@@ -34,32 +36,5 @@ class Data {
     str.add('start: $start');
     str.add('end: $end');
     return str.join('\n');
-  }
-}
-
-class Point {
-  late int x;
-  late int y;
-
-  Point({
-    required this.x,
-    required this.y,
-  });
-
-  Point.fromJson(Map<String, dynamic> json) {
-    x = json['x'];
-    y = json['y'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['x'] = x;
-    data['y'] = y;
-    return data;
-  }
-
-  @override
-  String toString() {
-    return '$x, $y';
   }
 }

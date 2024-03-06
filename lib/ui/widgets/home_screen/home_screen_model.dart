@@ -5,13 +5,13 @@ import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/ui/navigation/main_navigation.dart';
 
 class HomeScreenModel extends ChangeNotifier {
-  final controllerUrl = TextEditingController();
+  final controllerUrl = TextEditingController(text: 'https://flutter.webspark.dev/flutter/api');
   bool isCorrectedUrl = true;
   String? _errorMassage;
 
   String? get errorMassage => _errorMassage;
 
-  void onPressed(BuildContext context) {
+  void onPressed(BuildContext context) async {
     final url = controllerUrl.text;
     String? oldErrorMassage = _errorMassage;
     _errorMassage = null;
@@ -22,12 +22,13 @@ class HomeScreenModel extends ChangeNotifier {
     if (_errorMassage != null) return;
 
     _saveToStorage();
-    _getDataFromServer();
-    _goToNextScreen(context);
+    final data = _getDataFromServer();
+    _goToNextScreen(context, data);
   }
 
-  void _goToNextScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.process);
+  void _goToNextScreen(BuildContext context, Future<List<Data>> data) {
+    debugPrint('navigation to Process screen');
+    Navigator.of(context).pushNamed(MainNavigationRouteName.process, arguments: data);
   }
 
   void _validateAddress(String url) {
@@ -38,14 +39,14 @@ class HomeScreenModel extends ChangeNotifier {
     }
   }
 
-  void _getDataFromServer() async {
+  Future<List<Data>> _getDataFromServer() async {
+    debugPrint('getting Data from server');
     List<Data> list = await ApiClient().getData();
-    for (var element in list) {
-      debugPrint('$element\n');
-    }
+    return list;
   }
 
   void _saveToStorage() async {
+    debugPrint('saving to storage');
     await DataProvider().setUrl(controllerUrl.text);
 
     final getUrl = await DataProvider().getUrl();

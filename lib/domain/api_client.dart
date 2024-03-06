@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:test_task/domain/data_provider.dart';
 import 'package:test_task/domain/entity/data.dart';
+import 'package:test_task/domain/entity/way.dart';
 
 enum ApiClientExceptionType {
   tooManyRequest,
   internalServerError,
   other,
   emptyAddress,
+  validationError,
 }
 
 class ApiClientException {
@@ -44,11 +47,11 @@ class ApiClient {
     }
   }
 
-  Future<bool> post(String address) async {
+  Future<List<bool>> sendData(List<Way> data) async {
     String path = '/flutter/api';
     // final url = Uri.parse('$_host$path');
     final url = _makeUri('$_host$path');
-    Map<String, dynamic> body = {};
+    List<dynamic> body = data.map((e) => e.toJson()).toList();
     try {
       final request = await _client.postUrl(url);
       request.headers.contentType = ContentType.json;
@@ -57,10 +60,12 @@ class ApiClient {
       final dynamic json = (await response.jsonDecode());
       _validateResponse(response, json);
       final result = _parserPost(json);
+      // debugPrint(result.toString());
       return result;
     } on ApiClientException {
       rethrow;
-    } catch (_) {
+    } catch (e) {
+      debugPrint(e.toString());
       throw ApiClientException(ApiClientExceptionType.other);
     }
   }
@@ -87,10 +92,17 @@ class ApiClient {
     return dataList.map((value) => Data.fromJson(value)).toList();
   }
 
-  bool _parserPost(dynamic json) {
+  List<bool> _parserPost(dynamic json) {
     final jsonMap = json as Map<String, dynamic>;
-    final data = jsonMap['data'] as Map<String, dynamic>;
-    return data['correct'] as bool;
+    if (jsonMap['error']) {
+      throw ApiClientException(ApiClientExceptionType.validationError);
+    }
+    final dataList = jsonMap['data'] as List<dynamic>;
+    List<bool> results = [];
+    for(Map<String, dynamic> data in dataList) {
+      results.add(data['correct']);
+    }
+    return results;
   }
 
   void _validateResponse(HttpClientResponse response, dynamic json) {

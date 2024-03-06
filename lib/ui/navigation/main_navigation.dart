@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/ui/widgets/home_screen/home_screen.dart';
 import 'package:test_task/ui/widgets/preview_screen/preview_screen.dart';
 import 'package:test_task/ui/widgets/process_screen/process_screen.dart';
@@ -13,9 +16,30 @@ abstract class MainNavigationRouteName {
 class MainNavigation {
   final initialRoute = MainNavigationRouteName.home;
   final routes = {
-    MainNavigationRouteName.home : (context) => const HomeScreen(),
-    MainNavigationRouteName.process: (context) => const ProcessScreen(),
+    MainNavigationRouteName.home: (context) => const HomeScreen(),
+    // MainNavigationRouteName.process: (context) => const ProcessScreen(),
     MainNavigationRouteName.result_list: (context) => const ResultListScreen(),
     MainNavigationRouteName.preview_sceen: (context) => const PreviewScreen(),
   };
+
+  Route<Object> onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case MainNavigationRouteName.process:
+        final argument = settings.arguments;
+        final listData = argument as Future<List<Data>>;
+        return MaterialPageRoute(
+          builder: (context) => ProcessScreen(
+            data: listData,
+          ),
+        );
+      default:
+        return MaterialPageRoute(
+          builder: (context) => const Scaffold(
+            body: Center(
+              child: Text('Navigation error'),
+            ),
+          ),
+        );
+    }
+  }
 }
