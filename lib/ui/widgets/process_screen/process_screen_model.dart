@@ -25,13 +25,15 @@ class ProcessScreenModel extends ChangeNotifier {
     Point(-1, -1),
   ];
   double progress = 0;
-  String textForLoading =
-      'All calculation has finished, you can send your result to server';
+  String textForLoading = 'Data is calculated';
+  bool isCalculating = false;
   bool isDataSending = false;
 
   ProcessScreenModel(this._dataList);
 
   void startProcess() async {
+    isCalculating = true;
+    notifyListeners();
     dataList = await _dataList;
     for (int i = 0; i < dataList.length; i++) {
       _generateMatrix(i);
@@ -40,10 +42,13 @@ class ProcessScreenModel extends ChangeNotifier {
       final way = _restoreWay(data.end);
       _updateWaysData(i, way);
       progress = 100 * (i + 1) / dataList.length;
-      sleep(const Duration(seconds: 2));
-      debugPrint(progress.toString());
+      // debugPrint(progress.toString());
       notifyListeners();
     }
+    isCalculating = false;
+    textForLoading =
+        'All calculation has finished, you can send your result to server';
+    notifyListeners();
   }
 
   void _generateMatrix(int index) {
@@ -119,7 +124,7 @@ class ProcessScreenModel extends ChangeNotifier {
   }
 
   void _goToNextScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_sceen);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.result_list);
   }
 }
 

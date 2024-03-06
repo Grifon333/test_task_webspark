@@ -32,7 +32,6 @@ class _BodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(height: 200),
         _ProgressWidget(),
@@ -53,7 +52,6 @@ class _ProgressWidget extends StatelessWidget {
     final model = NotifierProvider.watch(context);
     if (model == null) return const SizedBox.shrink();
     final text = model.textForLoading;
-
     final progress = model.progress;
     return Column(
       children: [
@@ -100,8 +98,10 @@ class _SendDataWidget extends StatelessWidget {
     final model = NotifierProvider.watch(context);
     if (model == null) return const SizedBox.shrink();
     final isDataSending = model.isDataSending;
+    final isCalculating = model.isCalculating;
+    final isActive = !isDataSending && !isCalculating;
     return ElevatedButton(
-      onPressed: isDataSending ? null : () => model.sendResultToServer(context),
+      onPressed: isActive ? () => model.sendResultToServer(context) : null,
       child: const Center(
         child: Padding(
           padding: EdgeInsets.all(16),
