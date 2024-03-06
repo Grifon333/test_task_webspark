@@ -1,7 +1,8 @@
 import 'dart:collection';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_task/domain/api_client.dart';
 import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/domain/entity/point.dart';
@@ -9,8 +10,7 @@ import 'package:test_task/domain/entity/way.dart';
 import 'package:test_task/ui/navigation/main_navigation.dart';
 
 class ProcessScreenModel extends ChangeNotifier {
-  Future<List<Data>> _dataList;
-  List<Data> dataList = [];
+  List<Data> _dataList = [];
   Map<Point, Point> _steps = {};
   List<List<bool>> _visitedMatrix = [];
   List<Way> _ways = [];
@@ -29,21 +29,21 @@ class ProcessScreenModel extends ChangeNotifier {
   bool isCalculating = false;
   bool isDataSending = false;
 
-  ProcessScreenModel(this._dataList);
-
   void startProcess() async {
+    final box = await Hive.openBox('data');
     isCalculating = true;
     notifyListeners();
-    dataList = await _dataList;
+    _dataList = box.values.map((e) => e as Data).toList();
+    box.close();
     textForLoading = 'Data is calculated';
     notifyListeners();
-    for (int i = 0; i < dataList.length; i++) {
+    for (int i = 0; i < _dataList.length; i++) {
       _generateMatrix(i);
-      Data data = dataList[i];
+      Data data = _dataList[i];
       _bfs(data.start, data.end);
       final way = _restoreWay(data.end);
       _updateWaysData(i, way);
-      progress = 100 * (i + 1) / dataList.length;
+      progress = 100 * (i + 1) / _dataList.length;
       // debugPrint(progress.toString());
       notifyListeners();
     }
@@ -55,7 +55,7 @@ class ProcessScreenModel extends ChangeNotifier {
 
   void _generateMatrix(int index) {
     _visitedMatrix.clear();
-    List<String> field = dataList[index].field;
+    List<String> field = _dataList[index].field;
     int countRows = field.length;
     int countColumns = field[0].length;
     _visitedMatrix =
@@ -108,7 +108,7 @@ class ProcessScreenModel extends ChangeNotifier {
   }
 
   void _updateWaysData(int index, List<Point> steps) {
-    final data = dataList[index];
+    final data = _dataList[index];
     String path = steps.join('->');
     final result = Result(steps: steps, path: path);
     final way = Way(id: data.id, result: result);

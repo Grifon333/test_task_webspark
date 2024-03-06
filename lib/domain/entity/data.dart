@@ -1,9 +1,18 @@
+import 'package:hive/hive.dart';
+
 import 'point.dart';
 
+part 'data.g.dart';
+
+@HiveType(typeId: 0)
 class Data {
+  @HiveField(0)
   late String id;
+  @HiveField(1)
   late List<String> field;
+  @HiveField(2)
   late Point start;
+  @HiveField(3)
   late Point end;
 
   Data({

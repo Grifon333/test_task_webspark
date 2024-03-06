@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_task/domain/api_client.dart';
 import 'package:test_task/domain/data_provider.dart';
 import 'package:test_task/domain/entity/data.dart';
@@ -21,14 +23,15 @@ class HomeScreenModel extends ChangeNotifier {
     }
     if (_errorMassage != null) return;
 
-    _saveToStorage();
-    final data = _getDataFromServer();
-    _goToNextScreen(context, data);
+    _saveUrlToStorage();
+    final data = await _getDataFromServer();
+    _saveDataToStorage(data);
+    _goToNextScreen(context);
   }
 
-  void _goToNextScreen(BuildContext context, Future<List<Data>> data) {
+  void _goToNextScreen(BuildContext context) {
     debugPrint('navigation to Process screen');
-    Navigator.of(context).pushNamed(MainNavigationRouteName.process, arguments: data);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.process);
   }
 
   void _validateAddress(String url) {
@@ -45,12 +48,20 @@ class HomeScreenModel extends ChangeNotifier {
     return list;
   }
 
-  void _saveToStorage() async {
-    debugPrint('saving to storage');
+  void _saveUrlToStorage() async {
+    debugPrint('saving url to storage');
     await DataProvider().setUrl(controllerUrl.text);
-
     final getUrl = await DataProvider().getUrl();
     debugPrint(getUrl);
+  }
+
+  void _saveDataToStorage(List<Data> dataList) async {
+    var box = await Hive.openBox<Data>('data');
+    for(var data in dataList) {
+      box.add(data);
+    }
+    // debugPrint(box.values.toString());
+    box.close();
   }
 }
 

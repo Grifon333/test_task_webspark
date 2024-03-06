@@ -1,7 +1,14 @@
+import 'package:hive/hive.dart';
+
 import 'point.dart';
 
+part 'way.g.dart';
+
+@HiveType(typeId: 2)
 class Way {
+  @HiveField(0)
   late String id;
+  @HiveField(1)
   late Result result;
 
   Way({
@@ -22,8 +29,11 @@ class Way {
   }
 }
 
+@HiveType(typeId: 3)
 class Result {
+  @HiveField(0)
   late List<Point> steps;
+  @HiveField(1)
   late String path;
 
   Result({

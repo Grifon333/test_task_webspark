@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/ui/widgets/process_screen/process_screen_model.dart';
 
 class ProcessScreen extends StatelessWidget {
-  final Future<List<Data>> data;
-
-  const ProcessScreen({super.key, required this.data});
+  const ProcessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = ProcessScreenModel(data);
+    final model = ProcessScreenModel();
     model.startProcess();
     return Scaffold(
       appBar: AppBar(
@@ -79,16 +76,15 @@ class _ProgressSendWidget extends StatelessWidget {
     if (model == null) return const SizedBox.shrink();
     final isDataSending = model.isDataSending;
 
-    return isDataSending ? const SizedBox(
-      width: 100,
-      height: 100,
-      child: CircularProgressIndicator(
-        // value: 1,
-      ),
-    ) : const SizedBox();
+    return isDataSending
+        ? const SizedBox(
+            width: 100,
+            height: 100,
+            child: CircularProgressIndicator(),
+          )
+        : const SizedBox();
   }
 }
-
 
 class _SendDataWidget extends StatelessWidget {
   const _SendDataWidget({super.key});

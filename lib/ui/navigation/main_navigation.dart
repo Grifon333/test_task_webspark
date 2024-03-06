@@ -18,21 +18,21 @@ class MainNavigation {
   final initialRoute = MainNavigationRouteName.home;
   final routes = {
     MainNavigationRouteName.home: (context) => const HomeScreen(),
-    // MainNavigationRouteName.process: (context) => const ProcessScreen(),
+    MainNavigationRouteName.process: (context) => const ProcessScreen(),
     // MainNavigationRouteName.result_list: (context) => const ResultListScreen(),
     // MainNavigationRouteName.preview_screen: (context) => const PreviewScreen(),
   };
 
   Route<Object> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case MainNavigationRouteName.process:
-        final argument = settings.arguments;
-        final listData = argument as Future<List<Data>>;
-        return MaterialPageRoute(
-          builder: (context) => ProcessScreen(
-            data: listData,
-          ),
-        );
+      // case MainNavigationRouteName.process:
+      //   final argument = settings.arguments;
+      //   final listData = argument as Future<List<Data>>;
+      //   return MaterialPageRoute(
+      //     builder: (context) => ProcessScreen(
+      //       data: listData,
+      //     ),
+      //   );
       case MainNavigationRouteName.result_list:
         final argument = settings.arguments;
         final listWays = argument as List<Way>;

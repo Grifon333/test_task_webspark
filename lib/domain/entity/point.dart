@@ -1,5 +1,12 @@
+import 'package:hive/hive.dart';
+
+part 'point.g.dart';
+
+@HiveType(typeId: 1)
 class Point {
+  @HiveField(0)
   late int x;
+  @HiveField(1)
   late int y;
 
   Point(

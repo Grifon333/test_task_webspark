@@ -102,6 +102,7 @@ class ApiClient {
     for(Map<String, dynamic> data in dataList) {
       results.add(data['correct']);
     }
+    // debugPrint(results.toString());
     return results;
   }
 
