@@ -11,7 +11,7 @@ abstract class MainNavigationRouteName {
   static const home = '/';
   static const process = '/process';
   static const result_list = '/process/result_list';
-  static const preview_sceen = '/process/result_list/preview_screen';
+  static const preview_screen = '/process/result_list/preview_screen';
 }
 
 class MainNavigation {
@@ -20,7 +20,7 @@ class MainNavigation {
     MainNavigationRouteName.home: (context) => const HomeScreen(),
     // MainNavigationRouteName.process: (context) => const ProcessScreen(),
     // MainNavigationRouteName.result_list: (context) => const ResultListScreen(),
-    MainNavigationRouteName.preview_sceen: (context) => const PreviewScreen(),
+    // MainNavigationRouteName.preview_screen: (context) => const PreviewScreen(),
   };
 
   Route<Object> onGenerateRoute(RouteSettings settings) {
@@ -39,6 +39,14 @@ class MainNavigation {
         return MaterialPageRoute(
           builder: (context) => ResultListScreen(
             listWays: listWays,
+          ),
+        );
+      case MainNavigationRouteName.preview_screen:
+        final argument = settings.arguments;
+        final way = argument as Way;
+        return MaterialPageRoute(
+          builder: (context) => PreviewScreen(
+            way: way,
           ),
         );
       default:

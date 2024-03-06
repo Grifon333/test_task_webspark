@@ -3,9 +3,9 @@ class Point {
   late int y;
 
   Point(
-      this.x,
-      this.y,
-      );
+    this.x,
+    this.y,
+  );
 
   Point.fromJson(Map<String, dynamic> json) {
     x = json['x'];

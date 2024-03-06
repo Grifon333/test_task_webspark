@@ -6,7 +6,7 @@ class ResultListScreenModel extends ChangeNotifier {
   List<Way> ways = [];
 
   void goToNextScreen(BuildContext context, int index) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_sceen, arguments: ways[index]);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_screen, arguments: ways[index]);
   }
 }
 
