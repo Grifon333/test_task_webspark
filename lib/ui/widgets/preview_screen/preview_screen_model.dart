@@ -6,10 +6,16 @@ import 'package:test_task/domain/entity/point.dart';
 import 'package:test_task/domain/entity/way.dart';
 
 class PreviewScreenModel extends ChangeNotifier {
-  Way? way;
-  Data? data;
-  Map<Point, Color> map = {};
-  int size = 1;
+  Way? _way;
+  Data? _data;
+  Map<Point, Color> _coloredCell = {};
+  int _size = 1;
+
+  Way? get way => _way;
+
+  Map<Point, Color> get coloredCell => _coloredCell;
+
+  int get size => _size;
 
   final Color _startColor = const Color(0xFF64FFDA);
   final Color _endColor = const Color(0xFF009688);
@@ -17,37 +23,37 @@ class PreviewScreenModel extends ChangeNotifier {
   final Color _blockColor = const Color(0xFF000000);
 
   void coloredBox() {
-    if (way == null || data == null) return;
-    final field = data!.field;
-    for(int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
+    if (_way == null || _data == null) return;
+    final field = _data!.field;
+    for (int i = 0; i < _size; i++) {
+      for (int j = 0; j < _size; j++) {
         final String cell = field[i][j];
         if (cell == 'X') {
-          map.addAll({Point(i,j): _blockColor});
+          _coloredCell.addAll({Point(i, j): _blockColor});
         }
       }
     }
-    final steps = way!.result.steps;
-    map.addAll({steps.first: _startColor});
-    if (steps.length > 1) map.addAll({steps.last: _endColor});
+    final steps = _way!.result.steps;
+    _coloredCell.addAll({steps.first: _startColor});
+    if (steps.length > 1) _coloredCell.addAll({steps.last: _endColor});
     for (int i = 1; i < steps.length - 1; i++) {
-      map.addAll({steps[i]: _middleColor});
+      _coloredCell.addAll({steps[i]: _middleColor});
     }
     notifyListeners();
   }
 
   Future<void> getDataAndWayFromStorage(String id) async {
-    if (data == null) {
+    if (_data == null) {
       Box<Data> boxData = await BoxManager.instance.openDataBox();
-      data = boxData.get(id);
+      _data = boxData.get(id);
       await BoxManager.instance.closeBox<Data>(boxData);
     }
-    if (way == null) {
+    if (_way == null) {
       Box<Way> boxWay = await BoxManager.instance.openWayBox();
-      way = boxWay.get(id);
+      _way = boxWay.get(id);
       await BoxManager.instance.closeBox<Way>(boxWay);
     }
-    size = data?.field.length ?? 1;
+    _size = _data?.field.length ?? 1;
     notifyListeners();
   }
 }

@@ -100,7 +100,7 @@ class _GridTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.read(context);
     if (model == null) return const SizedBox();
-    final backgroundColor = model.map[Point(point.y, point.x)];
+    final backgroundColor = model.coloredCell[Point(point.y, point.x)];
 
     return DecoratedBox(
       decoration: BoxDecoration(

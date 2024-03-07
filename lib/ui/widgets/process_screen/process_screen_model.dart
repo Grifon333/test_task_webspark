@@ -25,16 +25,22 @@ class ProcessScreenModel extends ChangeNotifier {
     Point(-1, 1),
     Point(-1, -1),
   ];
-  double progress = 0;
-  String textForLoading = 'Data is getting';
-  bool isCalculating = false;
-  bool isDataSending = false;
+  double _progress = 0;
+  String _textForLoading = 'Data is getting';
+  bool _isCalculating = false;
+  bool _isDataSending = false;
+
+
+  double get progress => _progress;
+  String get textForLoading => _textForLoading;
+  bool get isCalculating => _isCalculating;
+  bool get isDataSending => _isDataSending;
 
   void startProcess() async {
-    isCalculating = true;
+    _isCalculating = true;
     notifyListeners();
     await _readDataFromStorage();
-    textForLoading = 'Data is calculated';
+    _textForLoading = 'Data is calculated';
     notifyListeners();
     for (int i = 0; i < _dataList.length; i++) {
       _generateMatrix(i);
@@ -42,12 +48,11 @@ class ProcessScreenModel extends ChangeNotifier {
       _bfs(data.start, data.end);
       final way = _restoreWay(data.end);
       _updateWaysData(i, way);
-      progress = 100 * (i + 1) / _dataList.length;
-      // debugPrint(progress.toString());
+      _progress = 100 * (i + 1) / _dataList.length;
       notifyListeners();
     }
-    isCalculating = false;
-    textForLoading =
+    _isCalculating = false;
+    _textForLoading =
         'All calculation has finished, you can send your result to server';
     notifyListeners();
   }
@@ -115,10 +120,10 @@ class ProcessScreenModel extends ChangeNotifier {
   }
 
   Future<void> sendResultToServer(BuildContext context) async {
-    isDataSending = true;
+    _isDataSending = true;
     notifyListeners();
     await ApiClient().sendData(_ways);
-    isDataSending = false;
+    _isDataSending = false;
     notifyListeners();
 
     await _saveWaysToStorage();
@@ -132,8 +137,8 @@ class ProcessScreenModel extends ChangeNotifier {
   Future<void> _readDataFromStorage() async {
     Box<Data> box = await BoxManager.instance.openDataBox();
     _dataList = box.values.toList();
-    debugPrint('---------------Read Data From Storage----------------');
-    debugPrint(_dataList.toString());
+    // debugPrint('---------------Read Data From Storage----------------');
+    // debugPrint(_dataList.toString());
     await BoxManager.instance.closeBox<Data>(box);
     notifyListeners();
   }
@@ -144,10 +149,8 @@ class ProcessScreenModel extends ChangeNotifier {
     for(var way in _ways) {
       await box.put(way.id, way);
     }
-    debugPrint('---------------Save Ways To Storage----------------');
-    debugPrint(_ways.map((e) => e.result.path).toString());
-    // print (box.get(_ways[0].id));
-    // print(box.get(_ways[1].id));
+    // debugPrint('---------------Save Ways To Storage----------------');
+    // debugPrint(_ways.map((e) => e.result.path).toString());
     await BoxManager.instance.closeBox<Way>(box);
   }
 }

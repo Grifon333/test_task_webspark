@@ -95,9 +95,9 @@ class _SendDataWidget extends StatelessWidget {
     if (model == null) return const SizedBox.shrink();
     final isDataSending = model.isDataSending;
     final isCalculating = model.isCalculating;
-    final isActive = !isDataSending && !isCalculating;
+    if (isDataSending) return const SizedBox();
     return ElevatedButton(
-      onPressed: isActive ? () => model.sendResultToServer(context) : null,
+      onPressed: isCalculating ? null : () => model.sendResultToServer(context),
       child: const Center(
         child: Padding(
           padding: EdgeInsets.all(16),

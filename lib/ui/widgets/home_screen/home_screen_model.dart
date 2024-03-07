@@ -8,15 +8,15 @@ import 'package:test_task/domain/entity/data.dart';
 import 'package:test_task/ui/navigation/main_navigation.dart';
 
 class HomeScreenModel extends ChangeNotifier {
-  final controllerUrl =
-      TextEditingController(text: 'https://flutter.webspark.dev/flutter/api');
-  bool isCorrectedUrl = true;
+  final _controllerUrl = TextEditingController();
   String? _errorMassage;
 
   String? get errorMassage => _errorMassage;
 
+  get controllerUrl => _controllerUrl;
+
   void onPressed(BuildContext context) async {
-    final url = controllerUrl.text;
+    final url = _controllerUrl.text;
     String? oldErrorMassage = _errorMassage;
     _errorMassage = null;
     _validateAddress(url);
@@ -55,7 +55,9 @@ class HomeScreenModel extends ChangeNotifier {
     }
   }
 
-  final RegExp _isGetParametersRegExp = RegExp(r'(\?)(\w+)(\=)(\w+)(((\&)(\w+)(\=)(\w+))*)');
+  final RegExp _isGetParametersRegExp =
+      RegExp(r'(\?)(\w+)(\=)(\w+)(((\&)(\w+)(\=)(\w+))*)');
+
   bool _isGetParameters(String str) => _isGetParametersRegExp.hasMatch(str);
 
   Future<List<Data>> _getDataFromServer() async {
@@ -66,7 +68,7 @@ class HomeScreenModel extends ChangeNotifier {
 
   Future<void> _saveUrlToStorage() async {
     // debugPrint('saving url to storage');
-    await DataProvider().setUrl(controllerUrl.text);
+    await DataProvider().setUrl(_controllerUrl.text);
     final getUrl = await DataProvider().getUrl();
     // debugPrint(getUrl);
   }

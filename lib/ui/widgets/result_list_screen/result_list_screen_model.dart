@@ -6,17 +6,20 @@ import 'package:test_task/domain/entity/way.dart';
 import 'package:test_task/ui/navigation/main_navigation.dart';
 
 class ResultListScreenModel extends ChangeNotifier {
-  List<Way> ways = [];
+  List<Way> _ways = [];
+
+  List<Way> get ways => _ways;
 
   void goToNextScreen(BuildContext context, int index) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_screen, arguments: ways[index].id);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_screen,
+        arguments: _ways[index].id);
   }
 
   Future<void> readWaysFromStorage() async {
     Box<Way> box = await BoxManager.instance.openWayBox();
-    ways = box.values.toList();
-    debugPrint('---------------Read Ways From Storage----------------');
-    debugPrint(ways.toString());
+    _ways = box.values.toList();
+    // debugPrint('---------------Read Ways From Storage----------------');
+    // debugPrint(ways.toString());
     await BoxManager.instance.closeBox<Way>(box);
     notifyListeners();
   }
