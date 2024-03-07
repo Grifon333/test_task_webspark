@@ -32,29 +32,43 @@ class HomeScreenModel extends ChangeNotifier {
   }
 
   void _goToNextScreen(BuildContext context) {
-    debugPrint('navigation to Process screen');
+    // debugPrint('navigation to Process screen');
     Navigator.of(context).pushNamed(MainNavigationRouteName.process);
   }
 
   void _validateAddress(String url) {
+    String urlWithoutParameters = 'https://flutter.webspark.dev/flutter/api';
+    int size = urlWithoutParameters.length;
     if (url.isEmpty || url == '') {
       _errorMassage = 'Fill field';
-    } else if (url != 'https://flutter.webspark.dev/flutter/api') {
+      return;
+    }
+    if (url.length < urlWithoutParameters.length ||
+        url.substring(0, size) != urlWithoutParameters) {
       _errorMassage = 'Invalid url address';
+      return;
+    }
+
+    if (url.length > size && !_isGetParameters(url.substring(size))) {
+      _errorMassage = 'Incorrect entered get parameters';
+      return;
     }
   }
 
+  final RegExp _isGetParametersRegExp = RegExp(r'(\?)(\w+)(\=)(\w+)(((\&)(\w+)(\=)(\w+))*)');
+  bool _isGetParameters(String str) => _isGetParametersRegExp.hasMatch(str);
+
   Future<List<Data>> _getDataFromServer() async {
-    debugPrint('getting Data from server');
+    // debugPrint('getting Data from server');
     List<Data> list = await ApiClient().getData();
     return list;
   }
 
   Future<void> _saveUrlToStorage() async {
-    debugPrint('saving url to storage');
+    // debugPrint('saving url to storage');
     await DataProvider().setUrl(controllerUrl.text);
     final getUrl = await DataProvider().getUrl();
-    debugPrint(getUrl);
+    // debugPrint(getUrl);
   }
 
   Future<void> _saveDataToStorage(List<Data> dataList) async {
@@ -63,8 +77,8 @@ class HomeScreenModel extends ChangeNotifier {
     for (var data in dataList) {
       await box.put(data.id, data);
     }
-    debugPrint('---------------Save Data To Storage----------------');
-    debugPrint(dataList.toString());
+    // debugPrint('---------------Save Data To Storage----------------');
+    // debugPrint(dataList.toString());
     await BoxManager.instance.closeBox<Data>(box);
   }
 }
