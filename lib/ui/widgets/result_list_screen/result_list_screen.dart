@@ -4,10 +4,14 @@ import 'package:test_task/ui/widgets/result_list_screen/result_list_screen_model
 class ResultListScreen extends StatelessWidget {
   const ResultListScreen({super.key});
 
+  Future<void> readData(ResultListScreenModel model) async {
+    await model.readWaysFromStorage();
+  }
+
   @override
   Widget build(BuildContext context) {
     final model = ResultListScreenModel();
-    model.readWaysFromStorage();
+    readData(model);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Result list screen'),

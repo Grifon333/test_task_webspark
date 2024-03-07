@@ -41,10 +41,10 @@ class MainNavigation {
       //   );
       case MainNavigationRouteName.preview_screen:
         final argument = settings.arguments;
-        final way = argument as Way;
+        final idWay = argument as String;
         return MaterialPageRoute(
           builder: (context) => PreviewScreen(
-            way: way,
+            idWay: idWay,
           ),
         );
       default:

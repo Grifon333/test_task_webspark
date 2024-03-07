@@ -9,7 +9,7 @@ class ResultListScreenModel extends ChangeNotifier {
   List<Way> ways = [];
 
   void goToNextScreen(BuildContext context, int index) {
-    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_screen, arguments: ways[index]);
+    Navigator.of(context).pushNamed(MainNavigationRouteName.preview_screen, arguments: ways[index].id);
   }
 
   Future<void> readWaysFromStorage() async {
@@ -17,7 +17,7 @@ class ResultListScreenModel extends ChangeNotifier {
     ways = box.values.toList();
     debugPrint('---------------Read Ways From Storage----------------');
     debugPrint(ways.toString());
-    // await BoxManager.instance.closeBox(box);
+    await BoxManager.instance.closeBox<Way>(box);
     notifyListeners();
   }
 }

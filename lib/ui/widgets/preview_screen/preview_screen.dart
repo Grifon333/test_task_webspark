@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:test_task/domain/entity/point.dart';
-import 'package:test_task/domain/entity/way.dart';
 import 'package:test_task/ui/widgets/preview_screen/preview_screen_model.dart';
 
 class PreviewScreen extends StatelessWidget {
-  final Way way;
+  final String idWay;
 
   const PreviewScreen({
     super.key,
-    required this.way,
+    required this.idWay,
   });
+
+  Future<void> initModel(PreviewScreenModel model) async {
+    await model.getDataAndWayFromStorage(idWay);
+    model.coloredBox();
+  }
 
   @override
   Widget build(BuildContext context) {
     final model = PreviewScreenModel();
-    model.way = way;
-    model.coloredBox();
+    initModel(model);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Preview screen'),
@@ -52,9 +55,10 @@ class _PathWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read(context);
+    final model = NotifierProvider.watch(context);
     if (model == null) return const SizedBox();
-    final path = model.way.result.path;
+    if (model.way == null) return const SizedBox();
+    final path = model.way!.result.path;
     return Text(
       path,
       style: const TextStyle(fontSize: 20),
@@ -67,35 +71,18 @@ class _GridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read(context);
+    final model = NotifierProvider.watch(context);
     if (model == null) return const SizedBox();
+    final size = model.size;
 
     return GridView.count(
-      // crossAxisCount: model.way.result,
-      crossAxisCount: 4,
+      crossAxisCount: size,
       children: [
-        for (int i = 0; i < 4; i++)
-          for (int j = 0; j < 4; j++)
+        for (int i = 0; i < size; i++)
+          for (int j = 0; j < size; j++)
             _GridTileWidget(
               point: Point(j, i),
             ),
-
-        // _GridTileWidget(x: 0, y: 0),
-        // _GridTileWidget(x: 1, y: 0),
-        // _GridTileWidget(x: 2, y: 0),
-        // _GridTileWidget(x: 3, y: 0),
-        // _GridTileWidget(x: 0, y: 1),
-        // _GridTileWidget(x: 1, y: 1),
-        // _GridTileWidget(x: 2, y: 1),
-        // _GridTileWidget(x: 3, y: 1),
-        // _GridTileWidget(x: 0, y: 2),
-        // _GridTileWidget(x: 1, y: 2),
-        // _GridTileWidget(x: 2, y: 2),
-        // _GridTileWidget(x: 3, y: 2),
-        // _GridTileWidget(x: 0, y: 3),
-        // _GridTileWidget(x: 1, y: 3),
-        // _GridTileWidget(x: 2, y: 3),
-        // _GridTileWidget(x: 3, y: 3),
       ],
     );
   }
@@ -113,16 +100,22 @@ class _GridTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.read(context);
     if (model == null) return const SizedBox();
-    final color = model.map[point];
+    final backgroundColor = model.map[Point(point.y, point.x)];
 
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
-        color: color,
+        color: backgroundColor,
       ),
       child: GridTile(
         child: Center(
-          child: Text(point.toString()),
+          child: Text(
+            point.toString(),
+            style: TextStyle(
+                color: backgroundColor == Colors.black
+                    ? Colors.white
+                    : Colors.black),
+          ),
         ),
       ),
     );

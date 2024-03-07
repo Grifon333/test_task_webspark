@@ -25,9 +25,9 @@ class HomeScreenModel extends ChangeNotifier {
     }
     if (_errorMassage != null) return;
 
-    _saveUrlToStorage();
+    await _saveUrlToStorage();
     final data = await _getDataFromServer();
-    _saveDataToStorage(data);
+    await _saveDataToStorage(data);
     _goToNextScreen(context);
   }
 
@@ -50,22 +50,22 @@ class HomeScreenModel extends ChangeNotifier {
     return list;
   }
 
-  void _saveUrlToStorage() async {
+  Future<void> _saveUrlToStorage() async {
     debugPrint('saving url to storage');
     await DataProvider().setUrl(controllerUrl.text);
     final getUrl = await DataProvider().getUrl();
     debugPrint(getUrl);
   }
 
-  void _saveDataToStorage(List<Data> dataList) async {
+  Future<void> _saveDataToStorage(List<Data> dataList) async {
     Box<Data> box = await BoxManager.instance.openDataBox();
     box.clear();
     for (var data in dataList) {
-      box.put(data.id, data);
+      await box.put(data.id, data);
     }
     debugPrint('---------------Save Data To Storage----------------');
     debugPrint(dataList.toString());
-    // await BoxManager.instance.closeBox(box);
+    await BoxManager.instance.closeBox<Data>(box);
   }
 }
 

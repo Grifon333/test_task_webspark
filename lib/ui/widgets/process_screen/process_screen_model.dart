@@ -121,7 +121,7 @@ class ProcessScreenModel extends ChangeNotifier {
     isDataSending = false;
     notifyListeners();
 
-    _saveWaysToStorage();
+    await _saveWaysToStorage();
     _goToNextScreen(context);
   }
 
@@ -134,18 +134,21 @@ class ProcessScreenModel extends ChangeNotifier {
     _dataList = box.values.toList();
     debugPrint('---------------Read Data From Storage----------------');
     debugPrint(_dataList.toString());
-    // await BoxManager.instance.closeBox(box);
+    await BoxManager.instance.closeBox<Data>(box);
+    notifyListeners();
   }
 
   Future<void> _saveWaysToStorage() async {
     Box<Way> box = await BoxManager.instance.openWayBox();
     box.clear();
     for(var way in _ways) {
-      box.put(way.id, way);
+      await box.put(way.id, way);
     }
     debugPrint('---------------Save Ways To Storage----------------');
     debugPrint(_ways.map((e) => e.result.path).toString());
-    // await BoxManager.instance.closeBox(box);
+    // print (box.get(_ways[0].id));
+    // print(box.get(_ways[1].id));
+    await BoxManager.instance.closeBox<Way>(box);
   }
 }
 
