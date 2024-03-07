@@ -65,18 +65,16 @@ class _ButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch(context);
     if (model == null) return const SizedBox.shrink();
+    final isActive = !model.isSavingData;
 
     return ElevatedButton(
-      onPressed: () => model.onPressed(context),
+      onPressed: isActive ? () => model.onPressed(context) : null,
       child: const Center(
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
             'Start counting process',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -96,7 +94,6 @@ class _FormWidget extends StatelessWidget {
     );
   }
 }
-
 
 class _ErrorWidget extends StatelessWidget {
   const _ErrorWidget({super.key});

@@ -10,10 +10,13 @@ import 'package:test_task/ui/navigation/main_navigation.dart';
 class HomeScreenModel extends ChangeNotifier {
   final _controllerUrl = TextEditingController();
   String? _errorMassage;
+  bool _isSavingData = false;
 
   String? get errorMassage => _errorMassage;
 
   get controllerUrl => _controllerUrl;
+
+  bool get isSavingData => _isSavingData;
 
   void onPressed(BuildContext context) async {
     final url = _controllerUrl.text;
@@ -25,9 +28,13 @@ class HomeScreenModel extends ChangeNotifier {
     }
     if (_errorMassage != null) return;
 
+    _isSavingData = true;
+    notifyListeners();
     await _saveUrlToStorage();
     final data = await _getDataFromServer();
     await _saveDataToStorage(data);
+    _isSavingData = false;
+    notifyListeners();
     _goToNextScreen(context);
   }
 

@@ -12,6 +12,7 @@ enum ApiClientExceptionType {
   other,
   emptyAddress,
   validationError,
+  incorrectResult,
 }
 
 class ApiClientException {
@@ -48,11 +49,14 @@ class ApiClient {
   }
 
   Future<List<bool>> sendData(List<Way> data) async {
+    // return [true];
     String path = '/flutter/api';
     // final url = Uri.parse('$_host$path');
-    final url = _makeUri('$_host$path');
+    // final url = _makeUri('$_host$path');
     List<dynamic> body = data.map((e) => e.toJson()).toList();
     try {
+      final address = await _getUrlFromStorage();
+      final url = _makeUri(address);
       final request = await _client.postUrl(url);
       request.headers.contentType = ContentType.json;
       request.write(jsonEncode(body));
@@ -99,8 +103,12 @@ class ApiClient {
     }
     final dataList = jsonMap['data'] as List<dynamic>;
     List<bool> results = [];
-    for(Map<String, dynamic> data in dataList) {
-      results.add(data['correct']);
+    for (Map<String, dynamic> data in dataList) {
+      final correct = data['correct'] as bool;
+      if (!correct) {
+        throw ApiClientException(ApiClientExceptionType.incorrectResult);
+      }
+      results.add(correct);
     }
     // debugPrint(results.toString());
     return results;
@@ -124,3 +132,22 @@ extension HttpClientResponseJsonDecode on HttpClientResponse {
         .then<dynamic>((value) => json.decode(value));
   }
 }
+
+// final json = {
+//   "error": false,
+//   "message": "OK",
+//   "data": [
+//     {
+//       "id": "7d785c38-cd54-4a98-ab57-44e50ae646c1",
+//       "field": [".X.", ".X.", "..."],
+//       "start": {"x": 2, "y": 1},
+//       "end": {"x": 0, "y": 2}
+//     },
+//     {
+//       "id": "88746d24-bf68-4dea-a6b6-4a8fefb47eb9",
+//       "field": ["XXX.", "X..X", "X..X", ".XXX"],
+//       "start": {"x": 0, "y": 3},
+//       "end": {"x": 3, "y": 0}
+//     }
+//   ]
+// };
